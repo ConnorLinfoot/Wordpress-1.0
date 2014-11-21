@@ -1,6 +1,13 @@
 <?php
 /** WordPress's config file **/
 /** http://wordpress.org/   **/
+/** Updated to work on newer versions of PHP hopefully without issues **/
+/** Updated by Connor Linfoot **/
+/** http://connorlinfoot.com/ **/
+
+# Disable Errors (There can be a lot of errors in Wordpress 1.0)
+error_reporting(0);
+ini_set('display_errors', 0);
 
 // ** MySQL settings ** //
 define('DB_NAME', 'wordpress');     // The name of the database
