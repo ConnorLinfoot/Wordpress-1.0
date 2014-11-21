@@ -13,9 +13,9 @@ function add_magic_quotes($array) {
 }
 
 if (!get_magic_quotes_gpc()) {
-    $HTTP_GET_VARS    = add_magic_quotes($HTTP_GET_VARS);
-    $HTTP_POST_VARS   = add_magic_quotes($HTTP_POST_VARS);
-    $HTTP_COOKIE_VARS = add_magic_quotes($HTTP_COOKIE_VARS);
+    $_GET    = add_magic_quotes($_GET);
+    $_POST   = add_magic_quotes($_POST);
+    $_COOKIE = add_magic_quotes($_COOKIE);
 }
 
 $wpvarstoreset = array('action', 'safe_mode', 'withcomments', 'c', 'posts', 'poststart', 'postend', 'content', 'edited_post_title', 'comment_error', 'profile', 'trackback_url', 'excerpt', 'showcomments', 'commentstart', 'commentend', 'commentorder');
@@ -23,14 +23,14 @@ $wpvarstoreset = array('action', 'safe_mode', 'withcomments', 'c', 'posts', 'pos
 for ($i=0; $i<count($wpvarstoreset); $i += 1) {
     $wpvar = $wpvarstoreset[$i];
     if (!isset($$wpvar)) {
-        if (empty($HTTP_POST_VARS["$wpvar"])) {
-            if (empty($HTTP_GET_VARS["$wpvar"])) {
+        if (empty($_POST["$wpvar"])) {
+            if (empty($_GET["$wpvar"])) {
                 $$wpvar = '';
             } else {
-                $$wpvar = $HTTP_GET_VARS["$wpvar"];
+                $$wpvar = $_GET["$wpvar"];
             }
         } else {
-            $$wpvar = $HTTP_POST_VARS["$wpvar"];
+            $$wpvar = $_POST["$wpvar"];
         }
     }
 }
@@ -42,43 +42,43 @@ switch($action) {
 			$standalone = 1;
 			require_once('admin-header.php');
 
-			$post_pingback = intval($HTTP_POST_VARS['post_pingback']);
-			$content = balanceTags($HTTP_POST_VARS['content']);
+			$post_pingback = intval($_POST['post_pingback']);
+			$content = balanceTags($_POST['content']);
 			$content = format_to_post($content);
-			$excerpt = balanceTags($HTTP_POST_VARS['excerpt']);
+			$excerpt = balanceTags($_POST['excerpt']);
 			$excerpt = format_to_post($excerpt);
-			$post_title = addslashes($HTTP_POST_VARS['post_title']);
-			$post_categories = $HTTP_POST_VARS['post_category'];
+			$post_title = addslashes($_POST['post_title']);
+			$post_categories = $_POST['post_category'];
 			if(get_settings('use_geo_positions')) {
-				$latstr = $HTTP_POST_VARS['post_latf'];
-				$lonstr = $HTTP_POST_VARS['post_lonf'];
+				$latstr = $_POST['post_latf'];
+				$lonstr = $_POST['post_lonf'];
 				if((strlen($latstr) > 2) && (strlen($lonstr) > 2 ) ) {
-					$post_latf = floatval($HTTP_POST_VARS['post_latf']);
-					$post_lonf = floatval($HTTP_POST_VARS['post_lonf']);
+					$post_latf = floatval($_POST['post_latf']);
+					$post_lonf = floatval($_POST['post_lonf']);
 				}
 			}
-			$post_status = $HTTP_POST_VARS['post_status'];
+			$post_status = $_POST['post_status'];
 			if (empty($post_status)) $post_status = get_settings('default_post_status');
-			$comment_status = $HTTP_POST_VARS['comment_status'];
+			$comment_status = $_POST['comment_status'];
 			if (empty($comment_status)) $comment_status = get_settings('default_comment_status');
-			$ping_status = $HTTP_POST_VARS['ping_status'];
+			$ping_status = $_POST['ping_status'];
 			if (empty($ping_status)) $ping_status = get_settings('default_ping_status');
-			$post_password = addslashes(stripslashes($HTTP_POST_VARS['post_password']));
+			$post_password = addslashes(stripslashes($_POST['post_password']));
 			$post_name = sanitize_title($post_title);
-			$trackback = $HTTP_POST_VARS['trackback_url'];
+			$trackback = $_POST['trackback_url'];
 		// Format trackbacks
 		$trackback = preg_replace('|\s+|', '\n', $trackback);
 
         if ($user_level == 0)
             die ('Cheatin&#8217; uh?');
 
-        if (($user_level > 4) && (!empty($HTTP_POST_VARS['edit_date']))) {
-            $aa = $HTTP_POST_VARS['aa'];
-            $mm = $HTTP_POST_VARS['mm'];
-            $jj = $HTTP_POST_VARS['jj'];
-            $hh = $HTTP_POST_VARS['hh'];
-            $mn = $HTTP_POST_VARS['mn'];
-            $ss = $HTTP_POST_VARS['ss'];
+        if (($user_level > 4) && (!empty($_POST['edit_date']))) {
+            $aa = $_POST['aa'];
+            $mm = $_POST['mm'];
+            $jj = $_POST['jj'];
+            $hh = $_POST['hh'];
+            $mn = $_POST['mn'];
+            $ss = $_POST['ss'];
             $jj = ($jj > 31) ? 31 : $jj;
             $hh = ($hh > 23) ? $hh - 24 : $hh;
             $mn = ($mn > 59) ? $mn - 60 : $mn;
@@ -88,8 +88,8 @@ switch($action) {
             $now = date('Y-m-d H:i:s', (time() + ($time_difference * 3600)));
         }
 
-		if (!empty($HTTP_POST_VARS['mode'])) {
-		switch($HTTP_POST_VARS['mode']) {
+		if (!empty($_POST['mode'])) {
+		switch($_POST['mode']) {
 			case 'bookmarklet':
 				$location = 'bookmarklet.php?a=b';
 				break;
@@ -105,10 +105,10 @@ switch($action) {
 		}
 
 		// What to do based on which button they pressed
-		if ('' != $HTTP_POST_VARS['saveasdraft']) $post_status = 'draft';
-		if ('' != $HTTP_POST_VARS['saveasprivate']) $post_status = 'private';
-		if ('' != $HTTP_POST_VARS['publish']) $post_status = 'publish';
-		if ('' != $HTTP_POST_VARS['advanced']) $post_status = 'draft';
+		if ('' != $_POST['saveasdraft']) $post_status = 'draft';
+		if ('' != $_POST['saveasprivate']) $post_status = 'private';
+		if ('' != $_POST['publish']) $post_status = 'publish';
+		if ('' != $_POST['advanced']) $post_status = 'draft';
 
 
         if((get_settings('use_geo_positions')) && (strlen($latstr) > 2) && (strlen($lonstr) > 2) ) {
@@ -129,7 +129,7 @@ switch($action) {
 
         $post_ID = $wpdb->get_var("SELECT ID FROM $tableposts ORDER BY ID DESC LIMIT 1");
 
-		if ('' != $HTTP_POST_VARS['advanced'])
+		if ('' != $_POST['advanced'])
 			$location = "post.php?action=edit&post=$post_ID";
 
 
@@ -201,7 +201,7 @@ switch($action) {
         $standalone = 0;
         require_once('admin-header.php');
 
-        $post = $HTTP_GET_VARS['post'];
+        $post = $_GET['post'];
         if ($user_level > 0) {
 			$postdata = get_postdata($post);
 			$authordata = get_userdata($postdata['Author_ID']);
@@ -246,18 +246,18 @@ switch($action) {
         if (!isset($blog_ID)) {
             $blog_ID = 1;
         }
-			$post_ID = $HTTP_POST_VARS['post_ID'];
-			$post_categories = $HTTP_POST_VARS['post_category'];
+			$post_ID = $_POST['post_ID'];
+			$post_categories = $_POST['post_category'];
 			if (!$post_categories) $post_categories[] = 1;
-			$post_autobr = intval($HTTP_POST_VARS['post_autobr']);
-			$content = balanceTags($HTTP_POST_VARS['content']);
+			$post_autobr = intval($_POST['post_autobr']);
+			$content = balanceTags($_POST['content']);
 			$content = format_to_post($content);
-			$excerpt = balanceTags($HTTP_POST_VARS['excerpt']);
+			$excerpt = balanceTags($_POST['excerpt']);
 			$excerpt = format_to_post($excerpt);
-			$post_title = addslashes($HTTP_POST_VARS['post_title']);
+			$post_title = addslashes($_POST['post_title']);
 			if(get_settings('use_geo_positions')) {
-				$latf = floatval($HTTP_POST_VARS["post_latf"]);
-        			$lonf = floatval($HTTP_POST_VARS["post_lonf"]);
+				$latf = floatval($_POST["post_latf"]);
+        			$lonf = floatval($_POST["post_lonf"]);
         			$latlonaddition = "";
         			if( ($latf != null) && ($latf <= 90 ) && ($latf >= -90) && ($lonf != null) && ($lonf <= 360) && ($lonf >= -360) ) {
                 			pingGeoUrl($post_ID);
@@ -266,28 +266,28 @@ switch($action) {
 					$latlonaddition = " post_lat=null, post_lon=null, ";
 				}
 			}
-			$post_status = $HTTP_POST_VARS['post_status'];
-			$prev_status = $HTTP_POST_VARS['prev_status'];
-			$post_status = $HTTP_POST_VARS['post_status'];
-			$comment_status = $HTTP_POST_VARS['comment_status'];
+			$post_status = $_POST['post_status'];
+			$prev_status = $_POST['prev_status'];
+			$post_status = $_POST['post_status'];
+			$comment_status = $_POST['comment_status'];
 			if (empty($comment_status)) $post_status = get_settings('default_comment_status');
-			$ping_status = $HTTP_POST_VARS['ping_status'];
+			$ping_status = $_POST['ping_status'];
 			if (empty($ping_status)) $post_status = get_settings('default_ping_status');
-			$post_password = addslashes($HTTP_POST_VARS['post_password']);
+			$post_password = addslashes($_POST['post_password']);
 			$post_name = sanitize_title($post_title);
-			$trackback = $HTTP_POST_VARS['trackback_url'];
+			$trackback = $_POST['trackback_url'];
 		// Format trackbacks
 		$trackback = preg_replace('|\s+|', '\n', $trackback);
 		
-		if ('' != $HTTP_POST_VARS['publish']) $post_status = 'publish';
+		if ('' != $_POST['publish']) $post_status = 'publish';
 
-        if (($user_level > 4) && (!empty($HTTP_POST_VARS['edit_date']))) {
-            $aa = $HTTP_POST_VARS['aa'];
-            $mm = $HTTP_POST_VARS['mm'];
-            $jj = $HTTP_POST_VARS['jj'];
-            $hh = $HTTP_POST_VARS['hh'];
-            $mn = $HTTP_POST_VARS['mn'];
-            $ss = $HTTP_POST_VARS['ss'];
+        if (($user_level > 4) && (!empty($_POST['edit_date']))) {
+            $aa = $_POST['aa'];
+            $mm = $_POST['mm'];
+            $jj = $_POST['jj'];
+            $hh = $_POST['hh'];
+            $mn = $_POST['mn'];
+            $ss = $_POST['ss'];
             $jj = ($jj > 31) ? 31 : $jj;
             $hh = ($hh > 23) ? $hh - 24 : $hh;
             $mn = ($mn > 59) ? $mn - 60 : $mn;
@@ -360,7 +360,7 @@ switch($action) {
 			}
         } // end if publish
         
-		if ($HTTP_POST_VARS['save']) {
+		if ($_POST['save']) {
 			$location = $HTTP_SERVER_VARS['HTTP_REFERER'];
 		} else {
         	$location = 'post.php';
@@ -376,7 +376,7 @@ switch($action) {
         if ($user_level == 0)
             die ('Cheatin&#8217; uh?');
 
-        $post_id = intval($HTTP_GET_VARS['post']);
+        $post_id = intval($_GET['post']);
         $postdata = get_postdata($post_id) or die('Oops, no post with this ID. <a href="post.php">Go back</a>!');
         $authordata = get_userdata($postdata['Author_ID']);
 
@@ -421,7 +421,7 @@ switch($action) {
             die ('Cheatin&#8217; uh?');
         }
 
-        $comment = $HTTP_GET_VARS['comment'];
+        $comment = $_GET['comment'];
         $commentdata = get_commentdata($comment, 1, true) or die('Oops, no comment with this ID. <a href="javascript:history.go(-1)">Go back</a>!');
         $content = $commentdata['comment_content'];
         $content = format_to_edit($content);
@@ -438,8 +438,8 @@ switch($action) {
 	if ($user_level == 0)
 		die ('Cheatin&#8217; uh?');
 	
-	$comment = $HTTP_GET_VARS['comment'];
-	$p = $HTTP_GET_VARS['p'];
+	$comment = $_GET['comment'];
+	$p = $_GET['p'];
 	$commentdata = get_commentdata($comment, 1, true) or die('Oops, no comment with this ID. <a href="edit.php">Go back</a>!');
 	
 	echo "<div class=\"wrap\">\n";
@@ -474,9 +474,9 @@ switch($action) {
 		die ('Cheatin&#8217; uh?');
 
 
-	$comment = $HTTP_GET_VARS['comment'];
-	$p = $HTTP_GET_VARS['p'];
-	if (isset($HTTP_GET_VARS['noredir'])) {
+	$comment = $_GET['comment'];
+	$p = $_GET['p'];
+	if (isset($_GET['noredir'])) {
 	    $noredir = true;
 	} else {
 	    $noredir = false;
@@ -507,9 +507,9 @@ switch($action) {
 	if ($user_level == 0)
 		die ('Cheatin&#8217; uh?');
 		
-	$comment = $HTTP_GET_VARS['comment'];
-	$p = $HTTP_GET_VARS['p'];
-	if (isset($HTTP_GET_VARS['noredir'])) {
+	$comment = $_GET['comment'];
+	$p = $_GET['p'];
+	if (isset($_GET['noredir'])) {
 	    $noredir = true;
 	} else {
 	    $noredir = false;
@@ -535,8 +535,8 @@ switch($action) {
 	if ($user_level == 0)
 		die ('Cheatin&#8217; uh?');
 	
-	$comment = $HTTP_GET_VARS['comment'];
-	$p = $HTTP_GET_VARS['p'];
+	$comment = $_GET['comment'];
+	$p = $_GET['p'];
 	$commentdata = get_commentdata($comment, 1, true) or die('Oops, no comment with this ID. <a href="edit.php">Go back</a>!');
 
 	wp_set_comment_status($comment, "approve");
@@ -564,9 +564,9 @@ switch($action) {
 	if ($user_level == 0)
 		die ('Cheatin&#8217; uh?');
 		
-	$comment = $HTTP_GET_VARS['comment'];
-	$p = $HTTP_GET_VARS['p'];
-	if (isset($HTTP_GET_VARS['noredir'])) {
+	$comment = $_GET['comment'];
+	$p = $_GET['p'];
+	if (isset($_GET['noredir'])) {
 	    $noredir = true;
 	} else {
 	    $noredir = false;
@@ -595,22 +595,22 @@ switch($action) {
         if ($user_level == 0)
             die ('Cheatin&#8217; uh?');
 
-        $comment_ID = $HTTP_POST_VARS['comment_ID'];
-        $comment_post_ID = $HTTP_POST_VARS['comment_post_ID'];
-        $newcomment_author = $HTTP_POST_VARS['newcomment_author'];
-        $newcomment_author_email = $HTTP_POST_VARS['newcomment_author_email'];
-        $newcomment_author_url = $HTTP_POST_VARS['newcomment_author_url'];
+        $comment_ID = $_POST['comment_ID'];
+        $comment_post_ID = $_POST['comment_post_ID'];
+        $newcomment_author = $_POST['newcomment_author'];
+        $newcomment_author_email = $_POST['newcomment_author_email'];
+        $newcomment_author_url = $_POST['newcomment_author_url'];
         $newcomment_author = addslashes($newcomment_author);
         $newcomment_author_email = addslashes($newcomment_author_email);
         $newcomment_author_url = addslashes($newcomment_author_url);
 
-        if (($user_level > 4) && (!empty($HTTP_POST_VARS['edit_date']))) {
-            $aa = $HTTP_POST_VARS['aa'];
-            $mm = $HTTP_POST_VARS['mm'];
-            $jj = $HTTP_POST_VARS['jj'];
-            $hh = $HTTP_POST_VARS['hh'];
-            $mn = $HTTP_POST_VARS['mn'];
-            $ss = $HTTP_POST_VARS['ss'];
+        if (($user_level > 4) && (!empty($_POST['edit_date']))) {
+            $aa = $_POST['aa'];
+            $mm = $_POST['mm'];
+            $jj = $_POST['jj'];
+            $hh = $_POST['hh'];
+            $mn = $_POST['mn'];
+            $ss = $_POST['ss'];
             $jj = ($jj > 31) ? 31 : $jj;
             $hh = ($hh > 23) ? $hh - 24 : $hh;
             $mn = ($mn > 59) ? $mn - 60 : $mn;
@@ -631,7 +631,7 @@ switch($action) {
 			WHERE comment_ID = $comment_ID"
 			);
 
-		$referredby = $HTTP_POST_VARS['referredby'];
+		$referredby = $_POST['referredby'];
 		if (!empty($referredby)) header('Location: ' . $referredby);
         else header ("Location: edit.php?p=$comment_post_ID&c=1#comments");
 

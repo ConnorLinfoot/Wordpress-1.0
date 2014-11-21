@@ -5,10 +5,10 @@ require(dirname(__FILE__) . '/wp-config.php');
 $request_array = 'HTTP_POST_VARS';
 $tb_id = explode('/', $HTTP_SERVER_VARS['REQUEST_URI']);
 $tb_id = intval($tb_id[count($tb_id)-1]);
-$tb_url = $HTTP_POST_VARS['url'];
-$title = $HTTP_POST_VARS['title'];
-$excerpt = $HTTP_POST_VARS['excerpt'];
-$blog_name = $HTTP_POST_VARS['blog_name'];
+$tb_url = $_POST['url'];
+$title = $_POST['title'];
+$excerpt = $_POST['excerpt'];
+$blog_name = $_POST['blog_name'];
 
 
 if (empty($title) && empty($tb_url) && empty($blog_name)) {
@@ -16,7 +16,7 @@ if (empty($title) && empty($tb_url) && empty($blog_name)) {
 	header('Location: ' . get_permalink($tb_id));
 }
 
-if ((strlen(''.$tb_id)) && (empty($HTTP_GET_VARS['__mode'])) && (strlen(''.$tb_url))) {
+if ((strlen(''.$tb_id)) && (empty($_GET['__mode'])) && (strlen(''.$tb_url))) {
 
 	@header('Content-Type: text/xml');
 

@@ -395,9 +395,9 @@ function user_pass_ok($user_login,$user_pass) {
 }
 
 function get_currentuserinfo() { // a bit like get_userdata(), on steroids
-	global $HTTP_COOKIE_VARS, $user_login, $userdata, $user_level, $user_ID, $user_nickname, $user_email, $user_url, $user_pass_md5, $cookiehash;
+	global $_COOKIE, $user_login, $userdata, $user_level, $user_ID, $user_nickname, $user_email, $user_url, $user_pass_md5, $cookiehash;
 	// *** retrieving user's data from cookies and db - no spoofing
-	$user_login = $HTTP_COOKIE_VARS['wordpressuser_'.$cookiehash];
+	$user_login = $_COOKIE['wordpressuser_'.$cookiehash];
 	$userdata = get_userdatabylogin($user_login);
 	$user_level = $userdata->user_level;
 	$user_ID = $userdata->ID;
@@ -1553,19 +1553,19 @@ function start_wp() {
 	global $post, $id, $postdata, $authordata, $day, $preview, $page, $pages, $multipage, $more, $numpages;
 	global $preview_userid,$preview_date,$preview_content,$preview_title,$preview_category,$preview_notify,$preview_make_clickable,$preview_autobr;
 	global $pagenow;
-	global $HTTP_GET_VARS;
+	global $_GET;
 	if (!$preview) {
 		$id = $post->ID;
 	} else {
 		$id = 0;
 		$postdata = array (
 			'ID' => 0,
-			'Author_ID' => $HTTP_GET_VARS['preview_userid'],
-			'Date' => $HTTP_GET_VARS['preview_date'],
-			'Content' => $HTTP_GET_VARS['preview_content'],
-			'Excerpt' => $HTTP_GET_VARS['preview_excerpt'],
-			'Title' => $HTTP_GET_VARS['preview_title'],
-			'Category' => $HTTP_GET_VARS['preview_category'],
+			'Author_ID' => $_GET['preview_userid'],
+			'Date' => $_GET['preview_date'],
+			'Content' => $_GET['preview_content'],
+			'Excerpt' => $_GET['preview_excerpt'],
+			'Title' => $_GET['preview_title'],
+			'Category' => $_GET['preview_category'],
 			'Notify' => 1
 			);
 	}

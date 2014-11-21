@@ -297,7 +297,7 @@ function get_archives($type='', $limit='', $format='html', $before = "", $after 
 }
 
 function get_calendar($daylength = 1) {
-	global $wpdb, $HTTP_GET_VARS, $m, $monthnum, $year, $timedifference, $month, $weekday, $tableposts, $posts;
+	global $wpdb, $_GET, $m, $monthnum, $year, $timedifference, $month, $weekday, $tableposts, $posts;
 
     // Quick check. If we have no posts at all, abort!
     if (!$posts) {
@@ -306,8 +306,8 @@ function get_calendar($daylength = 1) {
             return;
     }
 
-	if (isset($HTTP_GET_VARS['w'])) {
-		$w = ''.intval($HTTP_GET_VARS['w']);
+	if (isset($_GET['w'])) {
+		$w = ''.intval($_GET['w']);
 	}
 	$time_difference = get_settings('time_difference');
 
@@ -958,13 +958,13 @@ function the_content_unicode($more_link_text='(more...)', $stripteaser=0, $more_
 
 function get_the_content($more_link_text='(more...)', $stripteaser=0, $more_file='') {
 	global $id, $post, $more, $c, $withcomments, $page, $pages, $multipage, $numpages;
-	global $HTTP_SERVER_VARS, $HTTP_COOKIE_VARS, $preview, $cookiehash;
+	global $HTTP_SERVER_VARS, $_COOKIE, $preview, $cookiehash;
 	global $querystring_start, $querystring_equal, $querystring_separator;
     global $pagenow;
 	$output = '';
 
 	if (!empty($post->post_password)) { // if there's a password
-		if ($HTTP_COOKIE_VARS['wp-postpass_'.$cookiehash] != $post->post_password) {  // and it doesn't match the cookie
+		if ($_COOKIE['wp-postpass_'.$cookiehash] != $post->post_password) {  // and it doesn't match the cookie
 			$output = get_the_password_form();
 			return $output;
 		}
@@ -1053,11 +1053,11 @@ function the_excerpt_unicode() {
 
 function get_the_excerpt($fakeit = false) {
 	global $id, $post;
-	global $HTTP_SERVER_VARS, $HTTP_COOKIE_VARS, $preview, $cookiehash;
+	global $HTTP_SERVER_VARS, $_COOKIE, $preview, $cookiehash;
 	$output = '';
 	$output = stripslashes($post->post_excerpt);
 	if (!empty($post->post_password)) { // if there's a password
-		if ($HTTP_COOKIE_VARS['wp-postpass_'.$cookiehash] != $post->post_password) {  // and it doesn't match the cookie
+		if ($_COOKIE['wp-postpass_'.$cookiehash] != $post->post_password) {  // and it doesn't match the cookie
 			$output = "There is no excerpt because this is a protected post.";
 			return $output;
 		}
@@ -1601,7 +1601,7 @@ function comments_popup_script($width=400, $height=400, $file='wp-comments-popup
 }
 
 function comments_popup_link($zero='No Comments', $one='1 Comment', $more='% Comments', $CSSclass='', $none='Comments Off') {
-	global $id, $wpcommentspopupfile, $wpcommentsjavascript, $post, $wpdb, $tablecomments, $HTTP_COOKIE_VARS, $cookiehash;
+	global $id, $wpcommentspopupfile, $wpcommentsjavascript, $post, $wpdb, $tablecomments, $_COOKIE, $cookiehash;
 	global $querystring_start, $querystring_equal, $querystring_separator, $siteurl;
 	global $comment_count_cache;
 	if ('' == $comment_count_cache["$id"]) {
@@ -1614,7 +1614,7 @@ function comments_popup_link($zero='No Comments', $one='1 Comment', $more='% Com
 		return;
 	} else {
         if (!empty($post->post_password)) { // if there's a password
-            if ($HTTP_COOKIE_VARS['wp-postpass_'.$cookiehash] != $post->post_password) {  // and it doesn't match the cookie
+            if ($_COOKIE['wp-postpass_'.$cookiehash] != $post->post_password) {  // and it doesn't match the cookie
                 echo("Enter your password to view comments");
                 return;
             }

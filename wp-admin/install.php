@@ -4,7 +4,7 @@ if (!file_exists('../wp-config.php')) die("There doesn't seem to be a wp-config.
 require_once('../wp-config.php');
 require('upgrade-functions.php');
 
-$step = $HTTP_GET_VARS['step'];
+$step = $_GET['step'];
 if (!$step) $step = 0;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -675,7 +675,7 @@ $guessurl = str_replace('/wp-admin/install.php?step=2', '', 'http://' . $HTTP_HO
 
 
 <?php
-$url = $HTTP_POST_VARS['url'];
+$url = $_POST['url'];
 if (isset($url)) {
     $query= "UPDATE $tableoptions set option_value='$url' where option_id=1"; //siteurl
     $q = $wpdb->query($query);

@@ -23,8 +23,13 @@ $tableoptiongroup_options = $table_prefix . 'optiongroup_options';
 define('WPINC', 'wp-includes');
 require (ABSPATH . WPINC . '/wp-db.php');
 
+# New $location, fixes issues previously regarding "install.php" detection
+$actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$location = substr($actual_link, strrpos($actual_link, '/') + 1);
+$location = substr($location, 0, strpos($location, '?'));
+
 $wpdb->hide_errors();
-if (!$wpdb->get_row("SELECT * FROM $tableusers LIMIT 1") && !strstr($HTTP_SERVER_VARS['REQUEST_URI'], 'install.php')) {
+if (!$wpdb->get_row("SELECT * FROM $tableusers LIMIT 1") && $location != 'install.php') {
 	die("It doesn't look like you've installed WP yet. Try running <a href='wp-admin/install.php'>install.php</a>.");
 }
 $wpdb->show_errors();
